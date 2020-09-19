@@ -1,0 +1,18 @@
+{
+  "name": "ikea_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Julien Bisconti <julienbi@unity3d.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ikea-availability-checker": "^0.6.1",
+    "node-html-parser": "^1.2.20",
+    "ocr-space-api": "^1.0.1",
+    "xml2js": "^0.4.23"
+  }
+}

@@ -1,0 +1,85 @@
+<html>
+
+<head>
+
+    <title>IKEA av</title>
+
+    <style>
+        .availability {
+            width: 20px;
+            height: 20px;
+            border-radius: 1000px;
+            background: #777;
+            display: inline-block
+        }
+
+        .availability[probability=HIGH] {
+            background: #0f0;
+        }
+
+        .availability[probability=MEDIUM] {
+            background: #ff0;
+        }
+
+        .availability[probability=LOW] {
+            background: #f00;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>IKEA availability</h1>
+
+    <input id='store_id' value='562'>
+    <input id='product_id' value='50486792'>
+    <button onclick="check()" required>Check</button>
+
+    <img id='product_img' src='' height='200'>
+    <h2 id='name'></h2>
+    <h4 id='desc'></h4>
+    availability <div class='availability' id='availability'></div>
+    <div id='forecast'></div>
+    <div id='location'></div>
+
+    <script>
+
+        async function check() {
+            let product_id = document.getElementById('product_id').value.split('.').join('')
+            let store_id = document.getElementById('store_id').value
+
+            let available = await (await fetch('/api/' + product_id + '/' + store_id)).json()
+            console.log(available)
+            let data = await (await fetch('/api/' + product_id)).json()
+            console.log(data)
+
+            document.getElementById('product_img').setAttribute('src', 'https://www.ikea.com' + data.image)
+            document.getElementById('name').innerHTML = data.name
+            document.getElementById('desc').innerHTML = data.desc
+            document.getElementById('availability').innerHTML = available.stock
+            document.getElementById('availability').setAttribute('probability', available.is_available)
+
+            document.getElementById('forecast').innerHTML = ''
+            available.forecast.forEach(avdata => {
+                let point = document.createElement('div')
+                point.setAttribute('class', 'availability')
+                point.setAttribute('probability', avdata.prob)
+                point.innerHTML = avdata.stock
+                document.getElementById('forecast').appendChild(point)
+            });
+
+            let location_str = "aucun emplacement spécifié"
+            if (available.location) {
+                location_str = available.location
+                if (Array.isArray(available.location)) {
+                    location_str = available.location.join(' - ')
+                }
+            }
+            document.getElementById('location').innerHTML = location_str
+        }
+
+    </script>
+
+</body>
+
+</html>

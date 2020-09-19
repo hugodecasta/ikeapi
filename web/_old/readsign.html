@@ -1,0 +1,46 @@
+<div id="container">
+    <video width="200" height="200" autoplay="true" id="video">
+    </video>
+</div>
+<button onclick="capture()">Capture</button> <br> </br>
+<canvas id="canvas" style="overflow:auto"></canvas>
+
+<h2 id='product_id'></h2>
+
+
+
+<script>
+
+    var OCR_api_key = '8e65f273cd88957'
+
+    var video = document.querySelector("#video");
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+            })
+            .catch(function (err0r) {
+                console.log("Something went wrong!");
+            });
+    }
+    var resultb64 = "";
+    async function capture() {
+        var canvas = document.getElementById('canvas');
+        var video = document.getElementById('video');
+        canvas.width = 200;
+        canvas.height = 200;
+        canvas.getContext('2d').drawImage(video, 0, 0, 200, 200);
+        resultb64 = canvas.toDataURL();
+
+        let resp = await fetch('/api/detect', {
+            method: 'POST',
+            body: resultb64,
+            json: true,
+        })
+        let detect_data = await resp.json()
+        console.log(detect_data)
+        document.getElementById('product_id').innerHTML = detect_data.product_id
+    }
+
+
+</script>

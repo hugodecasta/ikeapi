@@ -1,0 +1,13 @@
+<h1>IKEA le plus proche</h1>
+<h3 id='name'></h3>
+
+<script>
+
+    navigator.geolocation.getCurrentPosition(async (geodat) => {
+        let loc = geodat.coords
+        let nearset = await (await fetch('/api/nearest/' + loc.latitude + '/' + loc.longitude)).json()
+        document.getElementById('name').innerHTML = nearset.name + ' (' + nearset.storeNo + ')'
+        console.log(nearset)
+    });
+
+</script>

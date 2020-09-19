@@ -1,0 +1,24 @@
+body {
+    font-family: 'Roboto';
+    margin: 0px;
+}
+
+.title {
+    background-color: #00f;
+    color: #ff0;
+    padding: 10px;
+    text-align: center;
+}
+
+.title span {
+    color: #00c;
+}
+
+.ikea_digit {
+    font-weight: bold;
+    padding: 5px 10px 5px 10px;
+    background: #000000;
+    color: #fff;
+    margin: 3px;
+    display: inline-block;
+}

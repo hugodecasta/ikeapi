@@ -1,0 +1,50 @@
+<input id='store_id' value='562'>
+<input list='autonames' id='query' onkeyup="typing()">
+
+<datalist id="autonames">
+</datalist>
+
+<div id='display'></div>
+
+
+<script>
+
+    let t = null
+    function typing() {
+        clearTimeout(t)
+        t = setTimeout(search, 300)
+    }
+
+    async function search() {
+        let store_id = document.getElementById('store_id').value
+        let query = document.getElementById('query').value
+
+        let found = await (await fetch('/api/search/' + encodeURI(query))).json()
+
+        document.getElementById('autonames').innerHTML = ''
+        found.completions.forEach(prop => {
+            let option = document.createElement('option')
+            option.setAttribute('value', prop.text)
+            document.getElementById('autonames').appendChild(option)
+        })
+
+        document.getElementById('display').innerHTML = ''
+        found.products.forEach(prod => {
+            let name = document.createElement('h2')
+            name.innerHTML = prod.name + ' (' + prod.itemMeasureReferenceText + ')'
+            let code = document.createElement('h3')
+            code.innerHTML = prod.id
+            let desc = document.createElement('h4')
+            desc.innerHTML = prod.typeName
+            let img = document.createElement('img')
+            img.setAttribute('src', prod.mainImageUrl)
+            img.setAttribute('height', 200)
+            document.getElementById('display').appendChild(img)
+            document.getElementById('display').appendChild(name)
+            document.getElementById('display').appendChild(code)
+            document.getElementById('display').appendChild(desc)
+            document.getElementById('display').appendChild(document.createElement('hr'))
+        });
+    }
+
+</script>
