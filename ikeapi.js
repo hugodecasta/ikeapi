@@ -108,6 +108,7 @@ async function detect_product_id(base64Image) {
             isOverlayRequired: false,
             base64Image
         },
+        timeout: 3000,
         headers: {
             "content-type": "application/json",
         },

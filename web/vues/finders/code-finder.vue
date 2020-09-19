@@ -13,6 +13,7 @@
                 id="video"
             >
             </video>
+            <button @click='stop_camera()'>stop</button>
         </div>
     </div>
 </template>
@@ -32,6 +33,12 @@ export default {
         }, 100);
     },
     methods: {
+        start_camera() {},
+        stop_camera() {
+            let video = document.getElementById("video");
+            video.srcObject = null;
+            Vue.set(this, "is_pic_detect", false);
+        },
         async detect() {
             var video = document.getElementById("video");
             var canvas = document.createElement("canvas");
@@ -46,10 +53,8 @@ export default {
             });
             let detect_data = await resp.json();
             if (detect_data.product_id) {
-                let video = document.getElementById("video");
-                video.srcObject = null;
-                Vue.set(this, "is_pic_detect", false);
                 Vue.set(this, "code", detect_data.product_id);
+                this.stop_camera();
             } else {
                 this.detect();
             }
@@ -63,10 +68,11 @@ export default {
             if (!value) return;
             setTimeout(async () => {
                 let video = document.getElementById("video");
-                console.log("coucou");
                 if (navigator.mediaDevices.getUserMedia) {
                     let stream = await navigator.mediaDevices.getUserMedia({
-                        video: true,
+                        video: {
+                            facingMode: { exact: "environment" },
+                        },
                     });
                     video.srcObject = stream;
                     this.detect();

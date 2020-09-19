@@ -12,6 +12,7 @@
                 {{store.full_name}}
             </option>
         </select>
+        <button @click='find_nearest()'>HOME</button>
     </div>
 </template>
 
@@ -25,6 +26,15 @@ export default {
         };
     },
     methods: {
+        async find_nearest() {
+            navigator.geolocation.getCurrentPosition(async (geodat) => {
+                let loc = geodat.coords;
+                let nearset = await api(
+                    "/nearest/" + loc.latitude + "/" + loc.longitude
+                );
+                this.set_storeNo(nearset.storeNo);
+            });
+        },
         set_storeNo(storeNo) {
             Vue.set(this, "storeNo", storeNo);
             this.$emit("input", storeNo);
@@ -34,15 +44,9 @@ export default {
         },
     },
     async mounted() {
-        navigator.geolocation.getCurrentPosition(async (geodat) => {
-            let stores = await api("/stores");
-            Vue.set(this, "stores", stores);
-            let loc = geodat.coords;
-            let nearset = await api(
-                "/nearest/" + loc.latitude + "/" + loc.longitude
-            );
-            this.set_storeNo(nearset.storeNo);
-        });
+        let stores = await api("/stores");
+        Vue.set(this, "stores", stores);
+        this.find_nearest();
     },
 };
 </script>
