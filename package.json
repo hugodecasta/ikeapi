@@ -9,6 +9,7 @@
   "author": "Julien Bisconti <julienbi@unity3d.com>",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ikea-availability-checker": "^0.6.1",
     "node-html-parser": "^1.2.20",

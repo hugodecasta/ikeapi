@@ -1,8 +1,10 @@
+require('dotenv').config()
+
 const express = require('express')
 const api = require('./ikeapi')
 const fs = require('fs')
 const app = express()
-const port = 8080
+const port = process.env.PORT
 
 function rawBody(req, res, next) {
     req.setEncoding('utf8');
