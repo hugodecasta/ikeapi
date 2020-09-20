@@ -16,17 +16,11 @@ export default {
     methods: {
         async get_stream() {
             if (navigator.mediaDevices.getUserMedia) {
-                try {
-                    return await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: { exact: "environment" },
-                        },
-                    });
-                } catch (e) {
-                    return await navigator.mediaDevices.getUserMedia({
-                        video: null,
-                    });
-                }
+                return await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: "environment" },
+                    },
+                });
             }
             return null;
         },
