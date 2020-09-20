@@ -22,7 +22,11 @@ export default {
     methods: {
         async get_devices() {
             const devices = await navigator.mediaDevices.enumerateDevices();
-            Vue.set(this, "all_devices", devices);
+            Vue.set(
+                this,
+                "all_devices",
+                devices.map((d) => d.label)
+            );
             return devices;
         },
         async get_stream() {
@@ -62,5 +66,6 @@ export default {
     width: 100%;
     height: 100%;
     background: #000;
+    color: #f00;
 }
 </style>
