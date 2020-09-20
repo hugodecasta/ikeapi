@@ -90,7 +90,7 @@ app.get('/read', (req, res) => {
 
 app.get('/api/stores', async (req, res) => {
     try {
-        res.send(await api.stores())
+        res.send(api.stores)
     } catch (e) {
         res.status(e.code)
         res.send('ikea response: ' + e.error)

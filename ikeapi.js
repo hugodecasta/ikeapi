@@ -5,6 +5,8 @@ const fs = require('fs')
 var adapter = { name: "RetailItemComm", endpoint: "https://iows.ikea.com", contract: "37249", consumer: "MAMMUT" }
 var local_url = 'fr/fr'
 
+const stores = JSON.parse(fs.readFileSync('./stores.json', 'utf8')).filter(dat => dat).filter(dat => dat.location)
+
 async function getProductData(product_id, type = 'ART') {
     let headers = {
         'Accept': 'application/vnd.ikea.iows+json;version=2.0',
@@ -80,13 +82,8 @@ async function full_search(name) {
     return (await response.json()).searchResultPage
 }
 
-async function stores() {
-    let stores = JSON.parse(fs.readFileSync('./stores.json', 'utf8')).filter(dat => dat).filter(dat => dat.location)
-    return stores
-}
-
 async function nearest_store(loc) {
-    let all_stores = await stores()
+    let all_stores = stores
     all_stores = all_stores.sort((a, b) => {
         let dista = Math.sqrt(Math.pow(parseFloat(a.location.latitude) - loc.latitude, 2) + Math.pow(parseFloat(a.location.longitude) - loc.longitude, 2))
         let distb = Math.sqrt(Math.pow(parseFloat(b.location.latitude) - loc.latitude, 2) + Math.pow(parseFloat(b.location.longitude) - loc.longitude, 2))
