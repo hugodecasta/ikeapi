@@ -1,5 +1,6 @@
 <template>
     <div class='camera'>
+        {{all_devices}}
         <video
             width="100%"
             height="100%"
@@ -13,7 +14,17 @@
 <script>
 export default {
     props: ["value"],
+    data() {
+        return {
+            all_devices: [],
+        };
+    },
     methods: {
+        async get_devices() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            Vue.set(this, "all_devices", devices);
+            return devices;
+        },
         async get_stream() {
             if (navigator.mediaDevices.getUserMedia) {
                 return await navigator.mediaDevices.getUserMedia({
@@ -38,6 +49,7 @@ export default {
         },
     },
     async mounted() {
+        console.log(await this.get_devices());
         await this.start_video();
         window.STOP = this.stop_video;
         window.START = this.start_video;
