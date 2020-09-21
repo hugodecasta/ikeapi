@@ -29,6 +29,7 @@ body {
     position: relative;
     margin-top: -9px;
     font-size: 24px;
+    pointer-events: none;
 }
 
 .capsule {
@@ -89,4 +90,25 @@ body {
     left: -5px;
     position: relative;
     margin-top: -9px;
+}
+
+.icon_btn {
+    background: #fff;
+    border-radius: 1000px;
+    width: 40px;
+    height: 40px;
+}
+
+.icon_btn.inverted {
+    color: #fff;
+    background: #000;
+}
+
+.icon_btn .material-icons {
+    top: 17px;
+    left: 8px;
+}
+
+.pop {
+    animation: pop 0.2s;
 }

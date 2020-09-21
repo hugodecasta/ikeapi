@@ -9,60 +9,29 @@
                 "background-image":`url("${product_data.image}")`
             }'
         ></div>
-        <div class='product_detail'>
-            <div
-                class='name'
-                :style='{
-                    width:product_data.name.length >= 7 ? "150px" : "auto"
-                }'
-            >{{product_data.name}}</div>
-            <div class='price'>
-                <span class='decimal'>{{product_data.price_parts[0]}}</span>
-                <span class='subs'>
-                    <span v-if='product_data.price_parts[1]'>,</span>{{product_data.price_parts[1]}} €
-                </span>
-            </div>
-        </div>
-        <div class='availability'>
-            <div :class='[availability.is_available, "available_bubble"]'>
-            </div>
-            <div class='stock'>
-                <template v-if="availability.stock==0">rupture de stock</template>
-                <template v-else-if='availability.stock < 10'>plus que {{availability.stock}} en stock</template>
-                <template v-else>{{availability.stock}} en stock</template>
-                <div
-                    class='restock'
-                    v-if='availability.stock < 10'
-                >
-                    <template v-if='restock'>(restockage le {{restock.date.day}} {{months[restock.date.month-1]}})</template>
-                    <template v-else>(restockage inconnu)</template>
-                </div>
-            </div>
-        </div>
+        <product-detail
+            class='detail'
+            :price_parts='product_data.price_parts'
+            :name='product_data.name'
+        >
+        </product-detail>
+        <product-availability
+            class='availability'
+            :availability='availability'
+            :restock='restock'
+        ></product-availability>
+
 </template>
 
 <script>
 export default {
     props: ["product_id", "store_no"],
+    components: load_vue_components(["product-detail", "product-availability"]),
     data() {
         return {
             product_data: null,
             availability: null,
             restock: null,
-            months: [
-                "Jan",
-                "Fev",
-                "Mar",
-                "Avr",
-                "Mai",
-                "Jun",
-                "Jui",
-                "Aou",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
         };
     },
     mounted() {
@@ -80,7 +49,6 @@ export default {
             let product_data = await api("/" + this.product_id);
             let restock = await api("/restock/" + this.product_id);
             restock = restock.type ? restock : null;
-            console.log(restock);
             Vue.set(this, "product_data", product_data);
             Vue.set(this, "availability", availability);
             Vue.set(this, "restock", restock);
@@ -109,7 +77,7 @@ export default {
     width: 100px;
     height: 100px;
     border-radius: 1000px;
-    background-size: 80px 80px;
+    background-size: 70px 70px;
     background-position: center center;
     background-repeat: no-repeat;
     background-color: #fff;
@@ -117,30 +85,15 @@ export default {
     animation: pop 0.2s;
 }
 
-.product_detail {
-    color: rgb(0, 0, 0);
-    font-weight: bold;
+.detail {
     position: absolute;
-    background: rgb(255, 255, 255);
-    padding: 10px 20px 10px 30px;
-    border-radius: 5px;
     top: 20px;
     left: 90px;
     z-index: -1;
     animation: from_left 1s;
+    padding: 10px 20px 10px 30px;
 }
-.product_detail div {
-    display: inline-block;
-}
-.price {
-    width: 70px;
-}
-.price .subs {
-    position: relative;
-    font-size: 10px;
-    top: -5px;
-    left: -3px;
-}
+
 @keyframes from_left {
     0% {
         left: 0px;
@@ -151,41 +104,9 @@ export default {
         opacity: 1;
     }
 }
-
 .availability {
     position: absolute;
-    width: 200px;
     top: 95px;
     left: 100px;
-}
-.available_bubble {
-    width: 20px;
-    height: 20px;
-    border-radius: 1000px;
-    background: #ddd;
-    animation: pop 0.5s;
-    display: inline-block;
-}
-.available_bubble.HIGH {
-    background: #0f0;
-}
-.available_bubble.MEDIUM {
-    background: #ff0;
-}
-.available_bubble.LOW {
-    background: #f00;
-}
-.availability .stock {
-    opacity: 0;
-    position: relative;
-    top: -4px;
-    margin-left: 3px;
-    display: inline-block;
-    animation: appear 0.5s 0.5s forwards;
-}
-
-.restock {
-    font-size: 11px;
-    position: absolute;
 }
 </style>

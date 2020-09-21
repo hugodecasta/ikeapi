@@ -35,9 +35,13 @@ export default {
         this.start_video();
         // Vue.set(this, "searching", true);
         // setTimeout(() => {
-        //     this.set_product_id(10324513);
+        //     this.set_product_id("10324513");
         //     Vue.set(this, "searching", false);
         // }, 0);
+        // setTimeout(() => {
+        //     this.set_product_id("09278338");
+        //     Vue.set(this, "searching", false);
+        // }, 2000);
     },
     methods: {
         set_product_id(product_id) {
@@ -54,14 +58,12 @@ export default {
                 .drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
             resultb64 = canvas.toDataURL();
             Vue.set(this, "searching", true);
-            console.log("searching");
             let resp = await fetch("/api/detect", {
                 method: "POST",
                 body: resultb64,
                 json: true,
             });
             let detect_data = await resp.json();
-            console.log("found", detect_data);
             let product_id = detect_data.product_id;
             if (product_id) {
                 this.set_product_id(product_id);

@@ -39,7 +39,7 @@ async function getProductData(product_id, type = 'ART') {
 
     let price_parts = (price + '').split('.')
 
-    return { image, name, desc, price, price_parts, pdata }
+    return { image, name, desc, price, price_parts, product_id }
 }
 
 async function getProductAvailability(store_id, product_id, type = 'ART') {
