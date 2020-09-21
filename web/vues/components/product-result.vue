@@ -10,7 +10,12 @@
             }'
         ></div>
         <div class='product_detail'>
-            <div class='name'>{{product_data.name}}</div>
+            <div
+                class='name'
+                :style='{
+                    width:product_data.name.length >= 7 ? "150px" : "auto"
+                }'
+            >{{product_data.name}}</div>
             <div class='price'>
                 <span class='decimal'>{{product_data.price_parts[0]}}</span>
                 <span class='subs'>
@@ -25,6 +30,13 @@
                 <template v-if="availability.stock==0">rupture de stock</template>
                 <template v-else-if='availability.stock < 10'>plus que {{availability.stock}} en stock</template>
                 <template v-else>{{availability.stock}} en stock</template>
+                <div
+                    class='restock'
+                    v-if='availability.stock < 10'
+                >
+                    <template v-if='restock'>(restockage le {{restock.date.day}} {{months[restock.date.month-1]}})</template>
+                    <template v-else>(restockage inconnu)</template>
+                </div>
             </div>
         </div>
 </template>
@@ -36,6 +48,21 @@ export default {
         return {
             product_data: null,
             availability: null,
+            restock: null,
+            months: [
+                "Jan",
+                "Fev",
+                "Mar",
+                "Avr",
+                "Mai",
+                "Jun",
+                "Jui",
+                "Aou",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ],
         };
     },
     mounted() {
@@ -45,14 +72,18 @@ export default {
         async update_data() {
             Vue.set(this, "product_data", null);
             Vue.set(this, "availability", null);
+            Vue.set(this, "restock", null);
             if (!this.product_id || !this.store_no) return;
             let availability = await api(
                 "/" + this.product_id + "/" + this.store_no
             );
             let product_data = await api("/" + this.product_id);
-            console.log(availability);
+            let restock = await api("/restock/" + this.product_id);
+            restock = restock.type ? restock : null;
+            console.log(restock);
             Vue.set(this, "product_data", product_data);
             Vue.set(this, "availability", availability);
+            Vue.set(this, "restock", restock);
         },
     },
     watch: {
@@ -147,9 +178,14 @@ export default {
 .availability .stock {
     opacity: 0;
     position: relative;
-    top: -3px;
+    top: -4px;
     margin-left: 3px;
     display: inline-block;
     animation: appear 0.5s 0.5s forwards;
+}
+
+.restock {
+    font-size: 11px;
+    position: absolute;
 }
 </style>

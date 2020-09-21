@@ -1,6 +1,17 @@
 <html>
 
 <head>
+    <!-- ---------------------------------------- APP SPECS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="assets/icon.png">
+    <link rel="apple-touch-startup-image" href="assets/icon.png">
+    <meta name="apple-mobile-web-app-title" content="IKEA scanner">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name='theme-color' content='#000000'>
+    <link rel="manifest" href="assets/manifest.json">
 
     <meta charset="utf-8">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
@@ -11,20 +22,20 @@
     <link rel='stylesheet' href='/assets/fonts.css'>
     <link rel='stylesheet' href='/assets/look.css'>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://unpkg.com/vue"></script>
     <script src="/assets/scripts/http-vue-loader.js"></script>
 
-    <title>IKEA</title>
+    <title>IKEA scanner</title>
 
 </head>
 
 <body>
-    <div id='app' class='dark_theme'>
+    <div id='app'>
         <index></index>
     </div>
     <script src='/assets/scripts/index.js'></script>
+    <script src='assets/scripts/pwa_main.js'></script>
 </body>
 
 </html>

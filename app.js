@@ -128,6 +128,17 @@ app.get('/api/nearest/:latitude/:longitude', async (req, res) => {
     }
 })
 
+app.get('/api/restock/:product_id', async (req, res) => {
+    let { product_id } = req.params
+    try {
+        res.send(await api.getProductRestockData(product_id))
+    } catch (e) {
+        console.log(e)
+        res.status(e.code)
+        res.send('ikea response: ' + e.error)
+    }
+})
+
 app.get('/api/:product_id/', async (req, res) => {
     let { product_id } = req.params
     try {

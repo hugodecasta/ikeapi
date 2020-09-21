@@ -77,7 +77,7 @@ async function getProductAvailability(store_id, product_id, type = 'ART') {
         location_data = adata.RetailItemAvailability.RetailItemCommChildAvailabilityList.RetailItemCommChildAvailability.map(c => c.RecommendedSalesLocation.$)
     }
     let location = location_data.map(ld => {
-        let location_parsed = parseInt(ld[0])
+        let location_parsed = parseInt(ld)
         if (isNaN(location_parsed)) {
             return ld
         } else {
@@ -91,6 +91,45 @@ async function getProductAvailability(store_id, product_id, type = 'ART') {
 
     return { is_available, stock, location, location_data, forecast, adata }
 
+}
+
+async function getProductRestockData(product_id) {
+    let url = `https://api.ingka.ikea.com/cia/availabilities/ru/fr?itemNos=${product_id}`
+    const options = {
+        method: 'GET',
+        headers: { "x-client-id": "b6c117e5-ae61-4ef5-b4cc-e0b1e37f0631" },
+        json: true,
+    }
+    let response = await fetch(url, options)
+    if (response.status != 200) throw { error: response.statusText, code: response.status }
+    let rdata = (await response.json()).data
+    let restocks = rdata.map(subrdata => subrdata?.availableStocks)
+        .reduce((acc, cur) => acc.concat(cur), [])
+        .filter(srd => srd)
+        .map(srd => srd.restocks)
+        .reduce((acc, cur) => acc.concat(cur), [])
+        .filter(srd => srd)
+        .map(srd => {
+            srd.date = new Date(srd.earliestDate)
+            return srd
+        })
+        .sort(function (a, b) {
+            let datea = a.date
+            let dateb = b.date
+            if (datea < dateb) return -1
+            if (datea > dateb) return 1
+            return 0
+        })
+    if (!restocks.length) return { type: null }
+    let nearest_restock = restocks[0]
+    let type = nearest_restock.type
+    let quantity = nearest_restock.quantity
+    let date = {
+        day: nearest_restock.date.getDate(),
+        month: nearest_restock.date.getMonth() + 1,
+        year: nearest_restock.date.getFullYear()
+    }
+    return { type, date, quantity }
 }
 
 async function search_item(name) {
@@ -146,4 +185,4 @@ async function detect_product_id(base64Image) {
     })
 }
 
-module.exports = { getProductData, getProductAvailability, search_item, full_search, nearest_store, detect_product_id, stores }
+module.exports = { getProductData, getProductAvailability, search_item, full_search, nearest_store, detect_product_id, getProductRestockData, stores }
