@@ -134,6 +134,7 @@ export default {
 <style scoped>
 .history {
     margin-top: 60px;
+    margin-bottom: 40px;
 }
 .history_button {
     position: fixed;
@@ -154,6 +155,7 @@ export default {
     background: #fff;
     box-shadow: 0px 0px 10px #000;
     transition: right 0.3s;
+    overflow-y: scroll;
 }
 .history_panel.open {
     right: -2px;
