@@ -33,11 +33,11 @@ export default {
     },
     async mounted() {
         this.start_video();
-        Vue.set(this, "searching", true);
-        setTimeout(() => {
-            this.set_product_id(10324513);
-            Vue.set(this, "searching", false);
-        }, 0);
+        // Vue.set(this, "searching", true);
+        // setTimeout(() => {
+        //     this.set_product_id(10324513);
+        //     Vue.set(this, "searching", false);
+        // }, 0);
     },
     methods: {
         set_product_id(product_id) {
