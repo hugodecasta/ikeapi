@@ -71,6 +71,7 @@ export default {
             this.history.splice(index, 1);
             this.obj_history.splice(index, 1);
             localStorage.setItem("history", JSON.stringify(this.history));
+            if (!this.history.length) Vue.set(this, "open", false);
         },
         async update_all_history() {
             let obj_history = [...this.history];
