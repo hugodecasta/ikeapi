@@ -1,26 +1,32 @@
 <template>
-    <div
-        class='result'
-        v-if='availability'
-    >
+    <div>
         <div
-            class='product-img'
-            :style='{
+            class='result'
+            v-if='availability'
+        >
+            <div
+                class='product-img'
+                :style='{
                 "background-image":`url("${product_data.image}")`
             }'
-        ></div>
-        <product-detail
-            class='detail'
-            :price_parts='product_data.price_parts'
-            :name='product_data.name'
-        >
-        </product-detail>
-        <product-availability
-            class='availability'
-            :availability='availability'
-            :restock='restock'
-        ></product-availability>
-
+            ></div>
+            <product-detail
+                class='detail'
+                :price_parts='product_data.price_parts'
+                :name='product_data.name'
+            >
+            </product-detail>
+            <product-availability
+                class='availability'
+                :availability='availability'
+                :restock='restock'
+            ></product-availability>
+        </div>
+        <div
+            class='message'
+            v-if='message'
+        >{{message}}</div>
+    </div>
 </template>
 
 <script>
@@ -32,6 +38,7 @@ export default {
             product_data: null,
             availability: null,
             restock: null,
+            message: null,
         };
     },
     mounted() {
@@ -42,16 +49,23 @@ export default {
             Vue.set(this, "product_data", null);
             Vue.set(this, "availability", null);
             Vue.set(this, "restock", null);
-            if (!this.product_id || !this.store_no) return;
-            let availability = await api(
-                "/" + this.product_id + "/" + this.store_no
-            );
-            let product_data = await api("/" + this.product_id);
-            let restock = await api("/restock/" + this.product_id);
-            restock = restock.type ? restock : null;
-            Vue.set(this, "product_data", product_data);
-            Vue.set(this, "availability", availability);
-            Vue.set(this, "restock", restock);
+            try {
+                if (!this.product_id || !this.store_no) return;
+                let availability = await api(
+                    "/" + this.product_id + "/" + this.store_no
+                );
+                let product_data = await api("/" + this.product_id);
+                let restock = await api("/restock/" + this.product_id);
+                restock = restock.type ? restock : null;
+                Vue.set(this, "product_data", product_data);
+                Vue.set(this, "availability", availability);
+                Vue.set(this, "restock", restock);
+            } catch (e) {
+                Vue.set(this, "message", "produit introuvable");
+                setTimeout(() => {
+                    Vue.set(this, "message", null);
+                }, 4000);
+            }
         },
     },
     watch: {
@@ -108,5 +122,23 @@ export default {
     position: absolute;
     top: 95px;
     left: 100px;
+}
+@keyframes message_anim {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    20% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    80% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
 }
 </style>

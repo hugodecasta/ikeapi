@@ -112,3 +112,14 @@ body {
 .pop {
     animation: pop 0.2s;
 }
+
+.message {
+    position: fixed;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    left: 0px;
+    pointer-events: none;
+    animation: message_anim 3s forwards;
+    color: #fff;
+}

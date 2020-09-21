@@ -105,10 +105,10 @@ export default {
         async add_to_history(product_id) {
             product_id = "" + product_id;
             if (this.history.includes(product_id)) return;
+            let obj = await this.parse_object(product_id);
+            if (obj == null) return;
+            this.obj_history.push(obj);
             this.history.push(product_id);
-            this.parse_object(product_id).then((obj) =>
-                this.obj_history.push(obj)
-            );
             this.save_history();
         },
         save_history() {

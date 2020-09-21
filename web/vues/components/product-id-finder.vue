@@ -19,6 +19,10 @@
             class='material-icons searching turning'
             v-if='searching'
         >hourglass_bottom</i>
+        <div
+            class='message'
+            v-if='message'
+        >{{message}}</div>
     </div>
 </template>
 
@@ -29,6 +33,8 @@ export default {
         return {
             take_pic: true,
             searching: false,
+            done: false,
+            message: null,
         };
     },
     async mounted() {
@@ -67,6 +73,11 @@ export default {
             let product_id = detect_data.product_id;
             if (product_id) {
                 this.set_product_id(product_id);
+            } else {
+                Vue.set(this, "message", "code indétectable");
+                setTimeout(() => {
+                    Vue.set(this, "message", null);
+                }, 4000);
             }
             Vue.set(this, "searching", false);
         },
