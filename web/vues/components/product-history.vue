@@ -51,11 +51,10 @@ export default {
         return {
             history: [],
             obj_history: [],
-            open: true,
+            open: false,
         };
     },
     async mounted() {
-        localStorage.setItem("history", "[]");
         let history = JSON.parse(localStorage.getItem("history")) || [];
         Vue.set(this, "history", history);
         this.update_all_history();
