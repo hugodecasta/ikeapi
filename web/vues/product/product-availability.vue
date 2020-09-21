@@ -69,14 +69,14 @@ export default {
 }
 
 .available_bubble.HIGH {
-    background: #0f0;
+    background: #0a8a00;
 }
 
 .available_bubble.MEDIUM {
-    background: #ff0;
+    background: #ffa524;
 }
 
 .available_bubble.LOW {
-    background: #f00;
+    background: #e00751;
 }
 </style>

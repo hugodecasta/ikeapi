@@ -42,7 +42,4 @@ export default {
     background: rgb(255, 255, 255);
     border-radius: 5px;
 }
-.product_detail div {
-    display: inline-block;
-}
 </style>

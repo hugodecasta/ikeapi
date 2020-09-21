@@ -37,7 +37,7 @@
                     <div
                         class='icon_btn trash_btn'
                         @click.stop='delete_item(index)'
-                    ><i class='material-icons'>delete</i></div>
+                    ><i class='material-icons'>clear</i></div>
                 </div>
             </div>
         </div>
@@ -57,7 +57,6 @@ export default {
     async mounted() {
         let history = JSON.parse(localStorage.getItem("history")) || [];
         Vue.set(this, "history", history);
-        this.update_all_history();
     },
     methods: {
         open_panel() {
@@ -70,7 +69,7 @@ export default {
         delete_item(index) {
             this.history.splice(index, 1);
             this.obj_history.splice(index, 1);
-            localStorage.setItem("history", JSON.stringify(this.history));
+            this.save_history();
             if (!this.history.length) Vue.set(this, "open", false);
         },
         async update_all_history() {
@@ -91,13 +90,17 @@ export default {
         },
         async parse_object(product_id) {
             if (!product_id || !this.store_no) return null;
-            let availability = await api(
-                "/" + product_id + "/" + this.store_no
-            );
-            let restock = await api("/restock/" + product_id);
-            let product_data = await api("/" + product_id);
-            restock = restock.type ? restock : null;
-            return { availability, product_data, restock };
+            try {
+                let availability = await api(
+                    "/" + product_id + "/" + this.store_no
+                );
+                let restock = await api("/restock/" + product_id);
+                let product_data = await api("/" + product_id);
+                restock = restock.type ? restock : null;
+                return { availability, product_data, restock };
+            } catch (e) {
+                return null;
+            }
         },
         async add_to_history(product_id) {
             product_id = "" + product_id;
@@ -106,6 +109,9 @@ export default {
             this.parse_object(product_id).then((obj) =>
                 this.obj_history.push(obj)
             );
+            this.save_history();
+        },
+        save_history() {
             localStorage.setItem("history", JSON.stringify(this.history));
         },
     },
@@ -167,12 +173,19 @@ export default {
 .detail {
     display: inline-block;
     position: relative;
-    top: -55px;
+    top: -50px;
+}
+.detail .name {
+    width: auto !important;
+    display: inline-block;
+}
+.detail .price {
+    display: inline-block;
 }
 .availability {
     position: relative;
-    top: -50px;
-    left: 91px;
+    top: -45px;
+    left: 93px;
     font-size: 11px;
 }
 .availability .stock {
@@ -183,7 +196,7 @@ export default {
 }
 .trash_btn {
     position: absolute;
-    right: 20px;
-    bottom: 45px;
+    right: 10px;
+    bottom: 35px;
 }
 </style>
