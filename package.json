@@ -14,6 +14,7 @@
     "ikea-availability-checker": "^0.6.1",
     "node-html-parser": "^1.2.20",
     "ocr-space-api": "^1.0.1",
+    "serve-favicon": "^2.5.0",
     "xml2js": "^0.4.23"
   }
 }

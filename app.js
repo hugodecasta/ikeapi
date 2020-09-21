@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
+var favicon = require('serve-favicon')
 const api = require('./ikeapi')
 const fs = require('fs')
 const app = express()
@@ -22,6 +23,7 @@ app.use(rawBody);
 // ----------------------------------------------------------------------------------------- STATIC ASSETS
 
 app.use('/assets', express.static(__dirname + '/web'))
+app.use(favicon(__dirname + '/web/icon.png'))
 
 // ----------------------------------------------------------------------------------------- VUE
 
@@ -85,6 +87,10 @@ app.get('/position', (req, res) => {
 app.get('/read', (req, res) => {
     res.sendFile(__dirname + '/web/readsign.html')
 })
+
+
+app.get('/pwa', (req, res) => { res.sendFile(__dirname + '/pwa_main.js') })
+app.get('/pwa_sw', (req, res) => { res.sendFile(__dirname + '/pwa_sw.js') })
 
 // ----------------------------------------- API
 
