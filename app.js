@@ -143,6 +143,7 @@ app.get('/api/:product_id/:store_id', async (req, res) => {
     try {
         res.send(await api.getProductAvailability(store_id, product_id))
     } catch (e) {
+        console.log(e)
         res.status(e.code)
         res.send('ikea response: ' + e.error)
     }

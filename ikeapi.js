@@ -21,14 +21,25 @@ async function getProductData(product_id, type = 'ART') {
     let url = adapter.endpoint + '/retail/iows/' + local_url + '/catalog/items/' + type + ',' + product_id
 
     let response = await fetch(url, init)
-    if (response.status != 200) throw { error: response.statusText, code: response.status }
+    if (response.status != 200) {
+        type = 'SPR'
+        url = adapter.endpoint + '/retail/iows/' + local_url + '/catalog/items/' + type + ',' + product_id
+        response = await fetch(url, init)
+        if (response.status != 200) {
+            console.log('error on getProductData', response)
+            throw { error: response.statusText, code: response.status }
+        }
+    }
     let pdata = (await response.json()).RetailItemComm
 
-    let image = pdata.RetailItemImageList.RetailItemImage[3].ImageUrl.$
+    let image = 'https://www.ikea.com' + pdata.RetailItemImageList.RetailItemImage[3].ImageUrl.$
     let name = pdata.ProductName.$
     let desc = pdata.ProductTypeName.$
+    let price = pdata.RetailItemCommPriceList.RetailItemCommPrice.Price.$
 
-    return { image, name, desc, pdata }
+    let price_parts = (price + '').split('.')
+
+    return { image, name, desc, price, price_parts, pdata }
 }
 
 async function getProductAvailability(store_id, product_id, type = 'ART') {
@@ -44,25 +55,39 @@ async function getProductAvailability(store_id, product_id, type = 'ART') {
 
     let url = adapter.endpoint + '/retail/iows/' + local_url + '/stores/' + store_id + '/availability/' + type + '/' + product_id
     let response = await fetch(url, init)
-    if (response.status != 200) throw { error: response.statusText, code: response.status }
+    if (response.status != 200) {
+        type = 'SPR'
+        url = adapter.endpoint + '/retail/iows/' + local_url + '/stores/' + store_id + '/availability/' + type + '/' + product_id
+        response = await fetch(url, init)
+        if (response.status != 200) {
+            console.log('error on getProductAvailability', response)
+            throw { error: response.statusText, code: response.status }
+        }
+    }
     let adata = (await response.json()).StockAvailability
 
     let is_available = adata.RetailItemAvailability.InStockProbabilityCode.$
     let stock = adata.RetailItemAvailability.AvailableStock.$
     let forecast = adata.AvailableStockForecastList.AvailableStockForecast
         .map(day => { return { prob: day.InStockProbabilityCode.$, stock: day.AvailableStock.$ } })
-    let location_data = adata.RetailItemAvailability.RecommendedSalesLocation.$
-    let location = null
-    let location_parsed = parseInt(location_data)
-    if (isNaN(location_parsed)) {
-        location = location_data
+    let location_data = null
+    if (adata.RetailItemAvailability.RecommendedSalesLocation) {
+        location_data = [adata.RetailItemAvailability.RecommendedSalesLocation.$]
     } else {
-        let cut = Array.from('' + location_data)
-        let allee = parseInt(cut.slice(0, 2).join(''))
-        let place = parseInt(cut.slice(2, 4).join(''))
-        let etage = parseInt(cut.slice(4, 6).join(''))
-        location = [allee, place, etage]
+        location_data = adata.RetailItemAvailability.RetailItemCommChildAvailabilityList.RetailItemCommChildAvailability.map(c => c.RecommendedSalesLocation.$)
     }
+    let location = location_data.map(ld => {
+        let location_parsed = parseInt(ld[0])
+        if (isNaN(location_parsed)) {
+            return ld
+        } else {
+            let cut = Array.from('' + ld)
+            let allee = parseInt(cut.slice(0, 2).join(''))
+            let place = parseInt(cut.slice(2, 4).join(''))
+            let etage = parseInt(cut.slice(4, 6).join(''))
+            return [allee, place, etage]
+        }
+    })
 
     return { is_available, stock, location, location_data, forecast, adata }
 

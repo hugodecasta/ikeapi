@@ -1,5 +1,5 @@
 body {
-    font-family: 'Roboto';
+    font-family: 'Noto IKEA', 'Noto Sans', 'Roboto';
     margin: 0px;
 }
 
@@ -21,4 +21,72 @@ body {
     color: #fff;
     margin: 3px;
     display: inline-block;
+}
+
+.material-icons {
+    top: 7px;
+    left: -5px;
+    position: relative;
+    margin-top: -9px;
+    font-size: 24px;
+}
+
+.capsule {
+    position: absolute;
+    padding: 10px 15px 10px 15px;
+    border-radius: 1000px;
+    background-color: #000000;
+    color: #fff;
+    animation: pop 0.1s;
+}
+
+.capsule.white {
+    background-color: #fff;
+    color: #000;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0);
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes appear {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.turning {
+    animation: turn_anim 2s linear infinite;
+}
+
+@keyframes turn_anim {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    top: 4px;
+    left: -5px;
+    position: relative;
+    margin-top: -9px;
 }
