@@ -81,7 +81,7 @@ export default {
                     let place_score = p.availability.location_data
                         .map((place) => {
                             let int = parseInt(place);
-                            return isNaN(int) ? 0 : int;
+                            return isNaN(int) ? 1 : int;
                         })
                         .reduce((acc, cur) => Math.min(acc, cur), 100000000);
                     let score = av_score + 1 / place_score;
@@ -138,7 +138,7 @@ export default {
             let obj = await this.parse_object(product_id);
             if (obj == null) return;
             this.obj_history.push(obj);
-            Vue.set(this, "obj_history", sort_history(obj_history));
+            Vue.set(this, "obj_history", this.sort_history(this.obj_history));
             this.history.push(product_id);
             this.save_history();
         },
