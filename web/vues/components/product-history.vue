@@ -1,7 +1,7 @@
 <template>
     <div>
         <div
-            v-if='history.length'
+            v-if='obj_history.length'
             :class='["history_button", "icon_btn", "pop", panel_can_open ? "inverted":""]'
             @click='open_panel()'
         >
