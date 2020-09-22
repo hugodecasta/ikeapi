@@ -72,6 +72,36 @@ export default {
             this.save_history();
             if (!this.history.length) Vue.set(this, "open", false);
         },
+        sort_history(obj_history) {
+            let av_order = ["LOW", "MEDIUM", "HIGH"];
+            let ordered = obj_history
+                .map((p) => {
+                    let av_score =
+                        av_order.indexOf(p.availability.is_available) * 1000000;
+                    let place_score = p.availability.location_data
+                        .map((place) => {
+                            let int = parseInt(place);
+                            return isNaN(int) ? 0 : int;
+                        })
+                        .reduce((acc, cur) => Math.min(acc, cur), 100000000);
+                    let score = av_score + 1 / place_score;
+                    p.score = score;
+                    p.scores = {
+                        score,
+                        av_score,
+                        place_score,
+                        name: p.product_data.name,
+                        loc: p.availability.location_data,
+                    };
+                    return p;
+                })
+                .sort(function (p1, p2) {
+                    if (p1.score > p2.score) return -1;
+                    if (p1.score < p2.score) return 1;
+                    return 0;
+                });
+            return ordered;
+        },
         async update_all_history() {
             let obj_history = [...this.history];
             let all_promise = [];
@@ -86,7 +116,7 @@ export default {
                 );
             }
             await Promise.all(all_promise);
-            Vue.set(this, "obj_history", obj_history);
+            Vue.set(this, "obj_history", this.sort_history(obj_history));
         },
         async parse_object(product_id) {
             if (!product_id || !this.store_no) return null;
@@ -108,6 +138,7 @@ export default {
             let obj = await this.parse_object(product_id);
             if (obj == null) return;
             this.obj_history.push(obj);
+            Vue.set(this, "obj_history", sort_history(obj_history));
             this.history.push(product_id);
             this.save_history();
         },
