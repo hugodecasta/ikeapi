@@ -7,7 +7,7 @@ var local_url = 'fr/fr'
 
 const stores = JSON.parse(fs.readFileSync('./stores.json', 'utf8')).filter(dat => dat).filter(dat => dat.location)
 
-async function getProductData(product_id, type = 'ART') {
+async function getProductData(product_id, type = 'ART', raw = false) {
     let headers = {
         'Accept': 'application/vnd.ikea.iows+json;version=2.0',
         'Contract': adapter.contract,
@@ -31,6 +31,7 @@ async function getProductData(product_id, type = 'ART') {
         }
     }
     let pdata = (await response.json()).RetailItemComm
+    if (raw) return pdata
 
     let image = 'https://www.ikea.com' + pdata.RetailItemImageList.RetailItemImage[3].ImageUrl.$
     let name = pdata.ProductName.$
@@ -39,7 +40,7 @@ async function getProductData(product_id, type = 'ART') {
 
     let price_parts = (price + '').split('.')
 
-    return { image, name, desc, price, price_parts, product_id }
+    return { image, name, desc, price, price_parts, product_id, pdata }
 }
 
 async function getProductAvailability(store_id, product_id, type = 'ART') {
@@ -110,7 +111,7 @@ async function getProductRestockData(product_id) {
         .reduce((acc, cur) => acc.concat(cur), [])
         .filter(srd => srd)
         .map(srd => {
-            srd.date = new Date(srd.earliestDate)
+            srd.date = new Date(srd.latestDate)
             return srd
         })
         .sort(function (a, b) {
@@ -130,6 +131,16 @@ async function getProductRestockData(product_id) {
         year: nearest_restock.date.getFullYear()
     }
     return { type, date, quantity }
+}
+
+async function getColourProducts(product_id) {
+    let sdata = null
+    try {
+        sdata = await full_search(product_id)
+    } catch (e) { throw e }
+    let product = sdata.productWindow.filter(p => p.id == product_id)[0]
+    let related = product.gprDescription.colors.filter(p => p.productId != product_id)
+    return { related, product }
 }
 
 async function search_item(name) {
@@ -185,4 +196,4 @@ async function detect_product_id(base64Image) {
     })
 }
 
-module.exports = { getProductData, getProductAvailability, search_item, full_search, nearest_store, detect_product_id, getProductRestockData, stores }
+module.exports = { getProductData, getProductAvailability, getColourProducts, search_item, full_search, nearest_store, detect_product_id, getProductRestockData, stores }

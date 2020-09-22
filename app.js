@@ -102,11 +102,20 @@ app.get('/api/stores', async (req, res) => {
         res.send('ikea response: ' + e.error)
     }
 })
-
+app.get('/api/colour/:product_id', async (req, res) => {
+    let { product_id } = req.params
+    try {
+        res.send(await api.getColourProducts(product_id))
+    } catch (e) {
+        console.log(e)
+        res.status(e.code)
+        res.send('ikea response: ' + e.error)
+    }
+})
 app.get('/api/search/:query', async (req, res) => {
     let { query } = req.params
     try {
-        res.send(await api.search_item(query))
+        res.send(await api.full_search(query))
     } catch (e) {
         res.status(e.code)
         res.send('ikea response: ' + e.error)
