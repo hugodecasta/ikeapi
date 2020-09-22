@@ -40,7 +40,7 @@ async function getProductData(product_id, type = 'ART', raw = false) {
 
     let price_parts = (price + '').split('.')
 
-    return { image, name, desc, price, price_parts, product_id, pdata }
+    return { image, name, desc, price, price_parts, product_id }
 }
 
 async function getProductAvailability(store_id, product_id, type = 'ART') {
@@ -139,7 +139,8 @@ async function getColourProducts(product_id) {
         sdata = await full_search(product_id)
     } catch (e) { throw e }
     let product = sdata.productWindow.filter(p => p.id == product_id)[0]
-    let related = product.gprDescription.colors.filter(p => p.productId != product_id)
+    let related_raw = product.gprDescription.colors.filter(p => p.productId != product_id)
+    let related = await Promise.all(related_raw.map(r => getProductData(r.productId)))
     return { related, product }
 }
 

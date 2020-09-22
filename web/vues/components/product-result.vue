@@ -21,6 +21,19 @@
                 :availability='availability'
                 :restock='restock'
             ></product-availability>
+            <div
+                v-if='related'
+                class='related'
+            >
+                <div
+                    class='related_img pop'
+                    v-for='rel in related.related'
+                    :key='rel.product_id'
+                    :style='{"background-image":`url(${rel.image})`}'
+                    @click='select_new_product(rel.product_id)'
+                >
+                </div>
+            </div>
         </div>
         <div
             class='message'
@@ -31,13 +44,14 @@
 
 <script>
 export default {
-    props: ["product_id", "store_no"],
+    props: ["product_id", "store_no", "value"],
     components: load_vue_components(["product-detail", "product-availability"]),
     data() {
         return {
             product_data: null,
             availability: null,
             restock: null,
+            related: null,
             message: null,
         };
     },
@@ -45,21 +59,27 @@ export default {
         this.update_data();
     },
     methods: {
+        select_new_product(product_id) {
+            this.$emit("input", product_id);
+        },
         async update_data() {
             Vue.set(this, "product_data", null);
             Vue.set(this, "availability", null);
             Vue.set(this, "restock", null);
+            Vue.set(this, "related", null);
             try {
                 if (!this.product_id || !this.store_no) return;
                 let availability = await api(
                     "/" + this.product_id + "/" + this.store_no
                 );
                 let product_data = await api("/" + this.product_id);
+                let related = await api("/colour/" + this.product_id);
                 let restock = await api("/restock/" + this.product_id);
                 restock = restock.type ? restock : null;
                 Vue.set(this, "product_data", product_data);
                 Vue.set(this, "availability", availability);
                 Vue.set(this, "restock", restock);
+                Vue.set(this, "related", related);
             } catch (e) {
                 Vue.set(this, "message", "produit introuvable");
                 setTimeout(() => {
@@ -140,5 +160,23 @@ export default {
         transform: scale(0.8);
         opacity: 0;
     }
+}
+.related {
+    position: absolute;
+    top: 135px;
+    left: -10px;
+    width: 300%;
+}
+.related_img {
+    width: 50px;
+    height: 50px;
+    background-size: 35px 35px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 10000px;
+    background-color: #fff;
+    border: 2px solid #000;
+    margin: 5px;
+    display: inline-block;
 }
 </style>

@@ -4,6 +4,7 @@
         <product-result
             :product_id='product_id'
             :store_no='store_no'
+            v-model='product_id'
         ></product-result>
         <product-history
             :product_id='product_id'
