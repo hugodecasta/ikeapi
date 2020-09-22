@@ -80,6 +80,23 @@ body {
     }
 }
 
+.pulsing {
+    transform-origin: center center;
+    animation: pulse_anim 0.5s infinite;
+}
+
+@keyframes pulse_anim {
+    0% {
+        transform: scale(0.9);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(0.9);
+    }
+}
+
 .icon {
     width: 20px;
     height: 20px;
@@ -110,6 +127,7 @@ body {
 }
 
 .pop {
+    transform-origin: center center;
     animation: pop 0.2s;
 }
 

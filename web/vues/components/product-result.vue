@@ -5,7 +5,7 @@
             v-if='availability'
         >
             <div
-                class='product-img'
+                class='product-img pop'
                 :style='{
                 "background-image":`url("${product_data.image}")`
             }'
@@ -36,6 +36,12 @@
             </div>
         </div>
         <div
+            v-else-if='searching==true'
+            class='loading pulsing'
+        >
+            <i class='material-icons'>archive</i>
+        </div>
+        <div
             class='message'
             v-if='message'
         >{{message}}</div>
@@ -48,6 +54,7 @@ export default {
     components: load_vue_components(["product-detail", "product-availability"]),
     data() {
         return {
+            searching: false,
             product_data: null,
             availability: null,
             restock: null,
@@ -69,6 +76,7 @@ export default {
             Vue.set(this, "related", null);
             try {
                 if (!this.product_id || !this.store_no) return;
+                Vue.set(this, "searching", true);
                 let availability = await api(
                     "/" + this.product_id + "/" + this.store_no
                 );
@@ -86,6 +94,8 @@ export default {
                     Vue.set(this, "message", null);
                 }, 4000);
             }
+            console.log("END");
+            Vue.set(this, "searching", false);
         },
     },
     watch: {
@@ -116,7 +126,6 @@ export default {
     background-repeat: no-repeat;
     background-color: #fff;
     border: 3px solid #000;
-    animation: pop 0.2s;
 }
 
 .detail {
@@ -162,10 +171,11 @@ export default {
     }
 }
 .related {
-    position: absolute;
-    top: 135px;
-    left: -10px;
-    width: 300%;
+    position: fixed;
+    bottom: calc(20% - 100px);
+    left: 0px;
+    width: 100%;
+    text-align: center;
 }
 .related_img {
     width: 50px;
@@ -178,5 +188,14 @@ export default {
     border: 2px solid #000;
     margin: 5px;
     display: inline-block;
+}
+.loading {
+    position: fixed;
+    color: #fff;
+    bottom: 20%;
+    left: calc(50% - 50px);
+}
+.loading .material-icons {
+    font-size: 100px;
 }
 </style>
