@@ -40,10 +40,10 @@ export default {
     async mounted() {
         this.start_video();
         // Vue.set(this, "searching", true);
-        setTimeout(() => {
-            this.set_product_id("70301537");
-            Vue.set(this, "searching", false);
-        }, 0);
+        // setTimeout(() => {
+        //     this.set_product_id("29304001");
+        //     Vue.set(this, "searching", false);
+        // }, 0);
         // setTimeout(() => {
         //     this.set_product_id("09278338");
         //     Vue.set(this, "searching", false);

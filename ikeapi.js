@@ -133,14 +133,18 @@ async function getProductRestockData(product_id) {
     return { type, date, quantity }
 }
 
+function product_id_format(pid) {
+    return pid.split('.').join('').replace('s', '')
+}
+
 async function getColourProducts(product_id) {
     let sdata = null
     try {
         sdata = await full_search(product_id)
     } catch (e) { throw e }
-    let product = sdata.productWindow.filter(p => p.id == product_id)[0]
-    let related_raw = product.gprDescription.colors.filter(p => p.productId != product_id)
-    let related = await Promise.all(related_raw.map(r => getProductData(r.productId)))
+    let product = sdata.productWindow.filter(p => product_id_format(p.id) == product_id)[0] || sdata.productWindow[0]
+    let related_raw = product.gprDescription.colors.filter(p => product_id_format(p.productId) != product_id)
+    let related = await Promise.all(related_raw.map(r => getProductData(product_id_format(r.productId))))
     return { related, product }
 }
 
